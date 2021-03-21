@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var phoneNumber: EditText
     lateinit var name: EditText
     lateinit var email: EditText
-    lateinit var progresBar:ProgressBar
+    lateinit var progresBar: ProgressBar
     lateinit var result: TextView
     lateinit var button: Button
     lateinit var systemVerification: String
@@ -34,18 +34,12 @@ class MainActivity : AppCompatActivity() {
         result = findViewById(R.id.result)
         button = findViewById(R.id.button)
         progresBar = findViewById(R.id.progressBar)
-
-
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
                 super.onCodeSent(p0, p1)
                 systemVerification = p0
-                verify("980325")
-                Log.e(TAG, "onCodeSent: ${p0}")
-                Log.e(TAG, "onCodeSent: ${p1}")
+                signIn_with_credential("980325")
             }
-
-
             override fun onCodeAutoRetrievalTimeOut(p0: String) {
                 super.onCodeAutoRetrievalTimeOut(p0)
                 Log.e(TAG, "onCodeAutoRetrievalTimeOut: ${p0}")
@@ -55,9 +49,8 @@ class MainActivity : AppCompatActivity() {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                 Log.e(TAG, "onVerificationCompleted: ${credential.smsCode}")
-                verify(credential.smsCode!!)
+                signIn_with_credential(credential.smsCode!!)
             }
-
             override fun onVerificationFailed(e: FirebaseException) {
                 if (e is FirebaseAuthInvalidCredentialsException) {
                     Log.e(TAG, "onVerificationFailed: ${e}")
@@ -80,12 +73,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun verify(code: String) {
+    private fun signIn_with_credential(code: String) {
         val credential = PhoneAuthProvider.getCredential(systemVerification, code)
-        signIn_with_credential(credential)
-    }
-
-    private fun signIn_with_credential(credential: PhoneAuthCredential) {
         val firebaseAuth = FirebaseAuth.getInstance()
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this) {
             Log.e(TAG, "signIn: Hey  you  digned  in")
