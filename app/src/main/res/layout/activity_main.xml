@@ -44,14 +44,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:text="Verify" />
+        android:text="Send OTP" />
 
-    <TextView
-        android:id="@+id/result"
+    <EditText
+        android:id="@+id/code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp" />
+        android:hint="your confirmation code here"/>
+
+    <Button
+        android:visibility="gone"
+        android:id="@+id/signin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SignIn"/>
+
+
+
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -59,4 +68,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone" />
+
 </LinearLayout>
