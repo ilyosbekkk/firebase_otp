@@ -20,9 +20,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var phoneNumber: EditText
     lateinit var name: EditText
     lateinit var email: EditText
+    lateinit var code: EditText
     lateinit var progresBar: ProgressBar
-    lateinit var result: TextView
     lateinit var button: Button
+    lateinit var signin: Button
     lateinit var systemVerification: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,15 +32,20 @@ class MainActivity : AppCompatActivity() {
         phoneNumber = findViewById(R.id.editText)
         name = findViewById(R.id.editText1)
         email = findViewById(R.id.editText2)
-        result = findViewById(R.id.result)
         button = findViewById(R.id.button)
+        code = findViewById(R.id.code)
         progresBar = findViewById(R.id.progressBar)
+        signin = findViewById(R.id.signin)
+
+
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
+                signin.visibility = android.view.View.VISIBLE
                 super.onCodeSent(p0, p1)
                 systemVerification = p0
-                signIn_with_credential("980325")
+
             }
+
             override fun onCodeAutoRetrievalTimeOut(p0: String) {
                 super.onCodeAutoRetrievalTimeOut(p0)
                 Log.e(TAG, "onCodeAutoRetrievalTimeOut: ${p0}")
@@ -49,8 +55,13 @@ class MainActivity : AppCompatActivity() {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                 Log.e(TAG, "onVerificationCompleted: ${credential.smsCode}")
-                signIn_with_credential(credential.smsCode!!)
+                if (credential.smsCode != null) {
+                    code.setText(credential.smsCode?.toString())
+                    signIn_with_credential(credential.smsCode!!)
+
+                }
             }
+
             override fun onVerificationFailed(e: FirebaseException) {
                 if (e is FirebaseAuthInvalidCredentialsException) {
                     Log.e(TAG, "onVerificationFailed: ${e}")
@@ -70,6 +81,11 @@ class MainActivity : AppCompatActivity() {
                 .setCallbacks(callbacks)     // OnVerificationStateChangedCallbacks
                 .build()
             PhoneAuthProvider.verifyPhoneNumber(options)
+        }
+        signin.setOnClickListener {
+            if (!code.text.isEmpty()) {
+                signIn_with_credential(code.text.toString())
+            }
         }
     }
 
